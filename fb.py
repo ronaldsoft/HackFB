@@ -7,6 +7,7 @@ class FB(Browser):
 		Browser.__init__(self)
 		self.__email = email
 		self.__password = password
+		self.__listOpen = False
 		self.get("http://www.facebook.com")
 		self.login()
 
@@ -26,16 +27,18 @@ class FB(Browser):
 	def postStatus(self, text):
 		self.ensureURL('https://www.facebook.com')
 		self.fill(self.find_element_by_id('u_0_1m'), text)
+		self.implicitly_wait(2)
 		self.find_element_by_id('u_0_1a').submit()
 
-	class Chat:
 
-		def __init__(self, name):
-			self.__name = name
-			self.__messages = []
-			self.__newMessages = []
+	# opens the friends list
+	def openList(self):
+		if self.__listOpen == False:
+			self.execute_script("document.getElementsByClassName('fbNubButton')[1].click()")
+			self.__listOpens = True
 
-		def getMessages(self):
-			self.__messages = self.__newMessages[:]
-			self.__newMessages = []
-
+	# closes the friends list
+	def closeList(self):
+		if self.__listOpen:
+			self.execute_script("document.getElementsByClassName('fbNubButton')[1].click()")
+			self.__listOpens = Falses
