@@ -31,7 +31,7 @@ class FB(Browser):
 
 	# opens and closes the list viewer
 	def toggleChatList(self):
-		self.execute_script("document.getElementsByClassName('fbNubButton')[1].click()")
+		self.runJS("document.getElementsByClassName('fbNubButton')[1].click()")
 
 	def closeChats(self):
 		self.execute_script(""" buttons = document.getElementsByClassName('close button');
@@ -52,6 +52,7 @@ class FB(Browser):
 
 
 		# ensures that chat tab is open
+		# - currently does not work for offline users
 		def open(self):
 			self.__par.execute_script(""" people = document.getElementsByClassName('_52zl');
 					    for(var i = 0; i < people.length; i++){
@@ -64,7 +65,7 @@ class FB(Browser):
 			self.open()
 			self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
 											for(var i = 0; i < chats.length; i++){
-												if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML = '""" + self.__name + """'){
+												if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() = '""" + self.__name + """'.toUpperCase()){
 													chat = chats[i];
 													closeButton = chat.getElementsByClassName('close button')[0];
 													closeButton.click();
@@ -72,17 +73,14 @@ class FB(Browser):
 												}
 											}""")
 
+		def send(self, text):
+
+
+
+
 		# getter method (names of chat objects should not be changed)
 		def getName(self):
 			return self.__name
-
-		# returns unread messages in string form
-		def getNewMessages(self):
-			return self.__newMessages
-
-		# returns all messages in object form
-		def getAllMessages(self):
-			return self.__messages
 
 
 

@@ -9,10 +9,16 @@ class Browser(webdriver.Firefox):
 		webdriver.Firefox.__init__(self)
 
 		# make a javascript object for in-browser context
-		self.execute_script(""" HackFBObject = function(){
-								};
+		# self.runJSFile('js/setup.js')
 
-								hackfb = new HackFBObject()""")
+	def runJS(self, js):
+		self.execute_script(js)
+
+	def runJSFile(self, path):
+		jsFile = open(path)
+		jsCode = jsFile.read()
+		self.runJS(jsCode)
+		jsFile.close()
 
 	def ensureURL(self, expected):
 		if self.current_url == expected:
