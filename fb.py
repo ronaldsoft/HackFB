@@ -25,9 +25,10 @@ class FB(Browser):
 
 	# posts a status on own wall
 	def postStatus(self, text):
-		self.ensureURL('https://www.facebook.com')
-		self.fill(self.find_element_by_id('u_0_1m'), text)
-		self.find_element_by_id('u_0_1a').submit()
+		elem = self.find_element_by_css_selector('textarea')
+		elem.click()
+		self.fill(elem, text)
+		self.find_element_by_css_selector("li > button").click()
 
 	# opens and closes the list viewer
 	def toggleChatList(self):
