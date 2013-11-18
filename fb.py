@@ -39,6 +39,23 @@ class FB(Browser):
 									buttons[i].click()
 								}""")
 
+	# access icons at page header
+	def count_notifications(self):
+		return int(self.find_element_by_id('notificationsCountValue').get_attribute('innerHTML'))
+	def count_messages(self):
+		return int(self.find_element_by_id('mercurymessagesCountValue').get_attribute('innerHTML'))
+	def count_friend_requests(self):
+		return int(self.find_element_by_id('requestsCountValue').get_attribute('innerHTML'))
+
+	# clicks the 'Home' button at top of fb window
+	def go_home(self):
+		self.find_element_by_css_selector('#navHome > a').click()
+
+	# goes to the currently logged in user's profile
+	def view_profile(self):
+		self.find_element_by_css_selector('#navTimeline > a').click()
+		
+
 	class Chat:
 
 		# initiates a chat with a specific person
