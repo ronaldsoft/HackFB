@@ -8,6 +8,12 @@ class Browser(webdriver.Firefox):
 	def __init__(self):
 		webdriver.Firefox.__init__(self)
 
+		# make a javascript object for in-browser context
+		self.execute_script(""" HackFBObject = function(){
+								};
+
+								hackfb = new HackFBObject()""")
+
 	def ensureURL(self, expected):
 		if self.current_url == expected:
 			self.get(expected)
