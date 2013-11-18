@@ -7,9 +7,9 @@ class FB(Browser):
 		Browser.__init__(self)
 		self.__email = email
 		self.__password = password
-		self.__listOpen = False
 		self.get("http://www.facebook.com")
 		self.login()
+		self.toggleChatList()
 
 	
 	# from login screen, login with given credentials
@@ -27,18 +27,15 @@ class FB(Browser):
 	def postStatus(self, text):
 		self.ensureURL('https://www.facebook.com')
 		self.fill(self.find_element_by_id('u_0_1m'), text)
-		self.implicitly_wait(2)
 		self.find_element_by_id('u_0_1a').submit()
 
+	# opens and closes the list viewer
+	def toggleChatList(self):
+		self.execute_script("document.getElementsByClassName('fbNubButton')[1].click()")
 
-	# opens the friends list
-	def openList(self):
-		if self.__listOpen == False:
-			self.execute_script("document.getElementsByClassName('fbNubButton')[1].click()")
-			self.__listOpens = True
 
-	# closes the friends list
-	def closeList(self):
-		if self.__listOpen:
-			self.execute_script("document.getElementsByClassName('fbNubButton')[1].click()")
-			self.__listOpens = Falses
+	def openChat(self, name):
+		self.execute_script("people = document.getElementsByClassName('_52zl');for(var i = 0; i < people.length; i++){if(people[i].innerHTML.toUpperCase() == '" + name + "'.toUpperCase()){people[i].click(); break;}}")
+
+	def closeAllChats(self):
+		self.execute_script("buttons = document.getElementsByClassName('close button'); for(var i = 0; i < buttons.length; i++){buttons[i].click()}")
