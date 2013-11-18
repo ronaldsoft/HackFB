@@ -64,6 +64,8 @@ class FB(Browser):
 		def __init__(self, parent, name, clear=True):
 			self.__par = parent
 			self.__name = name
+			self.__message = ""
+			self.__prevMessage = ""
 			# self.__gatherMessages()
 			# if clear:
 			# 	self.markAllAsUnread()
@@ -105,24 +107,33 @@ class FB(Browser):
 													break;
 												}
 											}""")
+			self.getMessage()
 
-		def gatherMessages(self):
+		# grabs the most recent message in chat tab
+		def getMessage(self, getAll=False):
 			self.open()
-			return self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
+			self.__prevMessage = self.__message
+			self.__message = str(self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
 								for(var i = 0; i < chats.length; i++){
 									if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
 										var chat = chats[i];
-										var divs = document.querySelectorAll('[data-jsid~=message]>span');
-										var ret = [];
-										for(var j = 0; j < divs.length; j++){
-											ret.push(divs[i].innerHTML);
-										}
-										return ret;
+										var divs = chat.querySelectorAll('[data-jsid~=message]>span');
+										return divs[divs.length-1].innerHTML;
 										break;
 									}
-								}""")
+								}"""))
+			return self.__message
 
-		# getter method (names of chat objects should not be changed)
+		# Returns true if a new message has been recieved since the last call
+		# of 'getMessage()'.
+		def hasNewMessage(self):
+			return self.__message != self.__prevMessage
+
+		# Marks most recent message as read. hasNewMessage will no longer return True
+		def markAsRead(self):
+			self.__prevMessage = self.__message
+
+		# Getter method (names of chat objects should not be changed).
 		def getName(self):
 			return self.__name
 
