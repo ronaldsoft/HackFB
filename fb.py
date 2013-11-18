@@ -33,9 +33,57 @@ class FB(Browser):
 	def toggleChatList(self):
 		self.execute_script("document.getElementsByClassName('fbNubButton')[1].click()")
 
+	def closeChats(self):
+		self.execute_script(""" buttons = document.getElementsByClassName('close button');
+								for(var i = 0; i < buttons.length; i++){
+									buttons[i].click()
+								}""")
 
-	def openChat(self, name):
-		self.execute_script("people = document.getElementsByClassName('_52zl');for(var i = 0; i < people.length; i++){if(people[i].innerHTML.toUpperCase() == '" + name + "'.toUpperCase()){people[i].click(); break;}}")
+	class Chat:
 
-	def closeAllChats(self):
-		self.execute_script("buttons = document.getElementsByClassName('close button'); for(var i = 0; i < buttons.length; i++){buttons[i].click()}")
+		# initiates a chat with a specific person
+		# - 'parent' should by parent fb window
+		def __init__(self, parent, name, clear=True):
+			self.__par = parent
+			self.__name = name
+			# self.__gatherMessages()
+			# if clear:
+			# 	self.markAllAsUnread()
+
+
+		# ensures that chat tab is open
+		def open(self):
+			self.__par.execute_script(""" people = document.getElementsByClassName('_52zl');
+					    for(var i = 0; i < people.length; i++){
+					    	if(people[i].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
+					    		people[i].click(); break;
+					    	}
+					    }""")
+
+		def close(self):
+			self.open()
+			self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
+											for(var i = 0; i < chats.length; i++){
+												if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML = '""" + self.__name + """'){
+													chat = chats[i];
+													closeButton = chat.getElementsByClassName('close button')[0];
+													closeButton.click();
+													break;
+												}
+											}""")
+
+		# getter method (names of chat objects should not be changed)
+		def getName(self):
+			return self.__name
+
+		# returns unread messages in string form
+		def getNewMessages(self):
+			return self.__newMessages
+
+		# returns all messages in object form
+		def getAllMessages(self):
+			return self.__messages
+
+
+
+
