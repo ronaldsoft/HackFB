@@ -21,20 +21,20 @@ TODO
 ====
 
 + javascript controller
-..* function caller (w/ args)
-..* interval handler
-..* context storage
+  * function caller (w/ args)
+  * interval handler
+  * context storage
 + Page (subclass of Browser)
-..* javascript setup files
+  * javascript setup files
 + message event handler
 + status poster
-..* text only at first
+  * text only at first
 + chat improvements
-..* send messages to offline users
-..* search by name
+  * send messages to offline users
+  * search by name
 + wall interaction
-..* read posts
-..* like/comment on posts
-..* fix status poster
+  * read posts
+  * like/comment on posts
+  * fix status poster
 + exception handling
-..* no worries (yet...)
+  * no worries (yet...)
