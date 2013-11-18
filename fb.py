@@ -55,17 +55,17 @@ class FB(Browser):
 		# - currently does not work for offline users
 		def open(self):
 			self.__par.execute_script(""" people = document.getElementsByClassName('_52zl');
-					    for(var i = 0; i < people.length; i++){
-					    	if(people[i].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
-					    		people[i].click(); break;
-					    	}
-					    }""")
+										    for(var i = 0; i < people.length; i++){
+										    	if(people[i].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
+										    		people[i].click(); break;
+										    	}
+										    }""")
 
 		def close(self):
 			self.open()
 			self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
 											for(var i = 0; i < chats.length; i++){
-												if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() = '""" + self.__name + """'.toUpperCase()){
+												if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
 													chat = chats[i];
 													closeButton = chat.getElementsByClassName('close button')[0];
 													closeButton.click();
@@ -74,9 +74,19 @@ class FB(Browser):
 											}""")
 
 		def send(self, text):
-
-
-
+			self.open()
+			self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
+											for(var i = 0; i < chats.length; i++){
+												if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
+													chat = chats[i];
+													msgBox = chat.getElementsByClassName('uiTextareaAutogrow _552m')[0];
+													msgBox.value = '""" + text + """';
+													var e = new Event("keydown");
+													e.keyCode = 13;
+													msgBox.dispatchEvent(e);
+													break;
+												}
+											}""")
 
 		# getter method (names of chat objects should not be changed)
 		def getName(self):
