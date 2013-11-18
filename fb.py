@@ -66,8 +66,8 @@ class FB(Browser):
 			self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
 											for(var i = 0; i < chats.length; i++){
 												if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
-													chat = chats[i];
-													closeButton = chat.getElementsByClassName('close button')[0];
+													var chat = chats[i];
+													var closeButton = chat.getElementsByClassName('close button')[0];
 													closeButton.click();
 													break;
 												}
@@ -78,8 +78,8 @@ class FB(Browser):
 			self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
 											for(var i = 0; i < chats.length; i++){
 												if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
-													chat = chats[i];
-													msgBox = chat.getElementsByClassName('uiTextareaAutogrow _552m')[0];
+													var chat = chats[i];
+													var msgBox = chat.getElementsByClassName('uiTextareaAutogrow _552m')[0];
 													msgBox.value = '""" + text + """';
 													var e = new Event("keydown");
 													e.keyCode = 13;
@@ -87,6 +87,22 @@ class FB(Browser):
 													break;
 												}
 											}""")
+
+		def gatherMessages(self):
+			self.open()
+			return self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
+								for(var i = 0; i < chats.length; i++){
+									if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
+										var chat = chats[i];
+										var divs = document.querySelectorAll('[data-jsid~=message]>span');
+										var ret = [];
+										for(var j = 0; j < divs.length; j++){
+											ret.push(divs[i].innerHTML);
+										}
+										return ret;
+										break;
+									}
+								}""")
 
 		# getter method (names of chat objects should not be changed)
 		def getName(self):
