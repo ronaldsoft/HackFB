@@ -1,5 +1,14 @@
 from browser import *
+from threading import Timer
+import time
 
+
+########################################
+#####           Facebook           #####
+# ======================================
+# - encompasses a Facebook firefox window
+# - 
+# 
 class FB(Browser):
 
 	# open a facebook window
@@ -9,7 +18,7 @@ class FB(Browser):
 		self.__password = password
 		self.get("http://www.facebook.com")
 		self.login()
-		self.toggleChatList()
+		self.toggle_chat_list()
 
 	
 	# from login screen, login with given credentials
@@ -24,17 +33,20 @@ class FB(Browser):
 		self.find_element_by_id('logout_form').submit()
 
 	# posts a status on own wall
-	def postStatus(self, text):
+	def post_status(self, text):
 		elem = self.find_element_by_css_selector('textarea')
 		elem.click()
-		self.fill(elem, text)
+		elem.clear()
 		self.find_element_by_css_selector("li > button").click()
+		elem = self.find_element_by_css_selector('textarea')
+		self.fill(elem, text)
+		# self.find_element_by_css_selector("li > button").click()
 
 	# opens and closes the list viewer
-	def toggleChatList(self):
+	def toggle_chat_list(self):
 		self.runJS("document.getElementsByClassName('fbNubButton')[1].click()")
 
-	def closeChats(self):
+	def close_chats(self):
 		self.execute_script(""" buttons = document.getElementsByClassName('close button');
 								for(var i = 0; i < buttons.length; i++){
 									buttons[i].click()
@@ -53,10 +65,26 @@ class FB(Browser):
 		self.find_element_by_css_selector('#navHome > a').click()
 
 	# goes to the currently logged in user's profile
-	def view_profile(self):
+	def view_own_profile(self):
 		self.find_element_by_css_selector('#navTimeline > a').click()
-		
 
+	# automatically accepts first result of search
+	def graph_search(self, what):
+		bar = self.find_element_by_class_name('_586i')
+		bar.click()
+		bar.clear()
+		bar.send_keys(what)
+		bar.send_keys(Keys.RETURN)
+
+	
+
+
+	####################################
+	#####           Chat           #####
+	# ==================================
+	# - encompasses a Facebook chat tab
+	# - should not be interfered with by user (it doesn't detect events)
+	# 
 	class Chat:
 
 		# initiates a chat with a specific person
@@ -66,10 +94,8 @@ class FB(Browser):
 			self.__name = name
 			self.__message = ""
 			self.__prevMessage = ""
-			# self.__gatherMessages()
-			# if clear:
-			# 	self.markAllAsUnread()
-
+			self.__linked = False
+			self.__linkedWith = None
 
 		# ensures that chat tab is open
 		# - currently does not work for offline users
@@ -107,10 +133,10 @@ class FB(Browser):
 													break;
 												}
 											}""")
-			self.getMessage()
+			self.get_message()
 
 		# grabs the most recent message in chat tab
-		def getMessage(self, getAll=False):
+		def get_message(self, getAll=False):
 			self.open()
 			self.__prevMessage = self.__message
 			self.__message = str(self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
@@ -118,25 +144,22 @@ class FB(Browser):
 									if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
 										var chat = chats[i];
 										var divs = chat.querySelectorAll('[data-jsid~=message]>span');
-										return divs[divs.length-1].innerHTML;
+										return divs[divs.length-1].getElementsByTagName('span')[0].innerHTML;
 										break;
 									}
 								}"""))
 			return self.__message
 
 		# Returns true if a new message has been recieved since the last call
-		# of 'getMessage()'.
-		def hasNewMessage(self):
+		# of 'get_message()'.
+		def has_new_message(self):
 			return self.__message != self.__prevMessage
 
-		# Marks most recent message as read. hasNewMessage will no longer return True
-		def markAsRead(self):
+		# Marks most recent message as read. has_new_message will no longer return True
+		def mark_as_read(self):
 			self.__prevMessage = self.__message
 
 		# Getter method (names of chat objects should not be changed).
-		def getName(self):
+		def get_name(self):
 			return self.__name
-
-
-
 
