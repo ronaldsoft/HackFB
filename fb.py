@@ -96,6 +96,9 @@ class FB(Browser):
 			self.__prevMessage = ""
 			self.__linked = False
 			self.__linkedWith = None
+			self.open()
+			self.get_message()
+			self.mark_as_read()
 
 		# ensures that chat tab is open
 		# - currently does not work for offline users
@@ -134,6 +137,7 @@ class FB(Browser):
 												}
 											}""")
 			self.get_message()
+			self.mark_as_read()
 
 		# grabs the most recent message in chat tab
 		def get_message(self, getAll=False):
@@ -150,10 +154,21 @@ class FB(Browser):
 								}"""))
 			return self.__message
 
+		def recent_message(self):
+			return str(self.__par.execute_script(""" chats = document.getElementsByClassName('fbNubFlyout fbDockChatTabFlyout');
+								for(var i = 0; i < chats.length; i++){
+									if(chats[i].getElementsByClassName('titlebarText')[0].innerHTML.toUpperCase() == '""" + self.__name + """'.toUpperCase()){
+										var chat = chats[i];
+										var divs = chat.querySelectorAll('[data-jsid~=message]>span');
+										return divs[divs.length-1].getElementsByTagName('span')[0].innerHTML;
+										break;
+									}
+								}"""))
+
 		# Returns true if a new message has been recieved since the last call
 		# of 'get_message()'.
 		def has_new_message(self):
-			return self.__message != self.__prevMessage
+			return self.recent_message() != self.__prevMessage
 
 		# Marks most recent message as read. has_new_message will no longer return True
 		def mark_as_read(self):
